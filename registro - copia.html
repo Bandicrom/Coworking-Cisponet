@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso y Registro — COWORKING</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            deep: '#131915',      // Verde ultra oscuro
+                            dark: '#1E2720',      // Verde bosque profundo
+                            surface: '#26332A',   // Verde contenedor
+                            sage: '#8BA393',      // Verde suave
+                            accent: '#A4C3B2',    // Verde claro
+                            light: '#EBF1ED',     // Crema verdoso
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        display: ['"Syne"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-dark {
+            background: rgba(30, 39, 32, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(139, 163, 147, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-brand-deep text-brand-light font-sans antialiased min-h-screen flex flex-col justify-between relative overflow-x-hidden selection:bg-brand-sage selection:text-brand-deep">
+
+    <!-- Luces Ambientales de Fondo -->
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand-sage/10 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="absolute bottom-10 right-10 w-[300px] h-[300px] bg-brand-surface/40 rounded-full blur-[100px] pointer-events-none"></div>
+
+    <!-- ENCABEZADO -->
+    <header class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 relative z-10">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-brand-sage flex items-center justify-center text-brand-deep font-display font-extrabold text-xl">
+                    C
+                </div>
+                <span class="font-display font-bold text-xl tracking-wider text-white">COWORKING</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- FORMULARIO DE REGISTRO / INICIO DE SESIÓN -->
+    <main class="flex-1 flex items-center justify-center px-4 py-8 relative z-10 max-w-7xl mx-auto w-full">
+        <div class="w-full max-w-md">
+            <div class="glass-dark rounded-3xl p-8 border border-brand-sage/20 shadow-2xl space-y-6">
+                
+                <!-- Título -->
+                <div class="text-center space-y-2">
+                    <h1 id="form-title" class="font-display text-3xl font-bold text-white">Crear Cuenta</h1>
+                    <p id="form-subtitle" class="text-xs text-brand-sage/80">Ingresa tus datos para registrarte en el portal</p>
+                </div>
+
+                <!-- Formulario -->
+                <form id="auth-form" onsubmit="handleSubmit(event)" class="space-y-4">
+                    
+                    <!-- Campo Nombre Completo (Registro) -->
+                    <div id="field-fullname">
+                        <label class="block text-xs font-medium text-brand-sage mb-1.5">Nombre Completo</label>
+                        <div class="relative">
+                            <i data-lucide="user" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-sage/50"></i>
+                            <input type="text" id="fullname" required placeholder="Ej. Carlos Mendoza" class="w-full pl-10 pr-4 py-3 rounded-xl bg-brand-surface/80 border border-brand-sage/20 text-white placeholder-brand-sage/40 focus:outline-none focus:border-brand-sage text-sm transition-all">
+                        </div>
+                    </div>
+
+                    <!-- Campo Correo Electrónico (Con Verificación) -->
+                    <div>
+                        <label class="block text-xs font-medium text-brand-sage mb-1.5">Correo Electrónico</label>
+                        <div class="relative">
+                            <i data-lucide="mail" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-sage/50"></i>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                required 
+                                placeholder="tu@empresa.com" 
+                                oninput="validateEmailLive()"
+                                class="w-full pl-10 pr-4 py-3 rounded-xl bg-brand-surface/80 border border-brand-sage/20 text-white placeholder-brand-sage/40 focus:outline-none focus:border-brand-sage text-sm transition-all"
+                            >
+                        </div>
+                        <!-- Alerta de correo inválido -->
+                        <p id="email-error" class="hidden text-[11px] text-red-400 mt-1">
+                            Ingresa un correo válido (ejemplo: usuario@dominio.com).
+                        </p>
+                    </div>
+
+                    <!-- Campo Teléfono (Registro) -->
+                    <div id="field-phone">
+                        <label class="block text-xs font-medium text-brand-sage mb-1.5">Número de Teléfono</label>
+                        <div class="flex gap-2">
+                            <select id="country-code" class="px-3 py-3 rounded-xl bg-brand-surface/80 border border-brand-sage/20 text-white text-sm focus:outline-none focus:border-brand-sage">
+                                <option value="+58">+58 (VE)</option>
+                                <option value="+57">+57 (CO)</option>
+                                <option value="+54">+54 (AR)</option>
+                                <option value="+56">+56 (CL)</option>
+                                <option value="+34">+34 (ES)</option>
+                                <option value="+1">+1 (US)</option>
+                            </select>
+                            <div class="relative flex-1">
+                                <i data-lucide="phone" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-sage/50"></i>
+                                <input type="tel" id="phone" required placeholder="412 000 00" class="w-full pl-10 pr-4 py-3 rounded-xl bg-brand-surface/80 border border-brand-sage/20 text-white placeholder-brand-sage/40 focus:outline-none focus:border-brand-sage text-sm transition-all">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Campo Contraseña (Con Validación de Fortaleza) -->
+                    <div>
+                        <label class="block text-xs font-medium text-brand-sage mb-1.5">Contraseña</label>
+                        <div class="relative">
+                            <i data-lucide="lock" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-brand-sage/50"></i>
+                            <input 
+                                type="password" 
+                                id="password" 
+                                required 
+                                minlength="6" 
+                                placeholder="Mínimo 6 caracteres (letras y números)" 
+                                oninput="validatePasswordLive()"
+                                class="w-full pl-10 pr-4 py-3 rounded-xl bg-brand-surface/80 border border-brand-sage/20 text-white placeholder-brand-sage/40 focus:outline-none focus:border-brand-sage text-sm transition-all"
+                            >
+                        </div>
+                        <!-- Alerta de contraseña débil o común -->
+                        <p id="password-error" class="hidden text-[11px] text-red-400 mt-1 leading-snug"></p>
+                    </div>
+
+                    <!-- Botón de Envío -->
+                    <button type="submit" class="w-full py-3.5 rounded-xl bg-brand-sage text-brand-deep font-bold text-sm hover:bg-brand-accent transition-all shadow-lg shadow-brand-sage/20 flex items-center justify-center gap-2 group mt-2">
+                        <span id="btn-text">Registrarse</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+                </form>
+
+                <!-- Alternar modo entre Registro e Inicio de sesión -->
+                <div class="pt-4 border-t border-brand-sage/10 text-center">
+                    <p class="text-xs text-brand-sage/70">
+                        <span id="toggle-text">¿Ya tienes una cuenta?</span>
+                        <button type="button" onclick="toggleAuthMode()" class="text-brand-accent hover:underline font-semibold ml-1 focus:outline-none" id="toggle-btn">
+                            Iniciar Sesión
+                        </button>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="py-6 text-center text-xs text-brand-sage/50 relative z-10 border-t border-brand-sage/10">
+        &copy; COWORKING Hub. Gestión y reservas.
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        let isRegister = true;
+
+        // Lista negra de contraseñas comunes o inseguras
+        const weakPasswords = [
+            '123456', '12345678', '123456789', '12345', '1234567',
+            'password', 'contrasena', 'qwerty', 'abc123', '111111', 
+            '000000', '123123', 'admin123', 'coworking'
+        ];
+
+        function toggleAuthMode() {
+            isRegister = !isRegister;
+            const fieldFullname = document.getElementById('field-fullname');
+            const fieldPhone = document.getElementById('field-phone');
+            const fullnameInput = document.getElementById('fullname');
+            const phoneInput = document.getElementById('phone');
+            
+            const formTitle = document.getElementById('form-title');
+            const formSubtitle = document.getElementById('form-subtitle');
+            const btnText = document.getElementById('btn-text');
+            const toggleText = document.getElementById('toggle-text');
+            const toggleBtn = document.getElementById('toggle-btn');
+
+            // Limpiar errores al cambiar de modo
+            document.getElementById('password-error').classList.add('hidden');
+            document.getElementById('password').classList.remove('border-red-500/60');
+
+            if (isRegister) {
+                fieldFullname.classList.remove('hidden');
+                fieldPhone.classList.remove('hidden');
+                fullnameInput.required = true;
+                phoneInput.required = true;
+
+                formTitle.textContent = 'Crear Cuenta';
+                formSubtitle.textContent = 'Ingresa tus datos para registrarte en el portal';
+                btnText.textContent = 'Registrarse';
+                toggleText.textContent = '¿Ya tienes una cuenta?';
+                toggleBtn.textContent = 'Iniciar Sesión';
+            } else {
+                fieldFullname.classList.add('hidden');
+                fieldPhone.classList.add('hidden');
+                fullnameInput.required = false;
+                phoneInput.required = false;
+
+                formTitle.textContent = 'Iniciar Sesión';
+                formSubtitle.textContent = 'Ingresa tus credenciales para acceder';
+                btnText.textContent = 'Iniciar Sesión';
+                toggleText.textContent = '¿No tienes una cuenta?';
+                toggleBtn.textContent = 'Registrarse';
+            }
+        }
+
+        // Validación de correo (Regex)
+        function isValidEmailFormat(email) {
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return emailRegex.test(email);
+        }
+
+        function validateEmailLive() {
+            const emailInput = document.getElementById('email');
+            const emailError = document.getElementById('email-error');
+            const emailVal = emailInput.value.trim();
+
+            if (emailVal.length > 0 && !isValidEmailFormat(emailVal)) {
+                emailError.classList.remove('hidden');
+                emailInput.classList.add('border-red-500/60');
+                return false;
+            } else {
+                emailError.classList.add('hidden');
+                emailInput.classList.remove('border-red-500/60');
+                return true;
+            }
+        }
+
+        // Validación de Contraseña en tiempo real
+        function validatePasswordLive() {
+            if (!isRegister) return true; // En inicio de sesión no bloqueamos patrones simples de registro
+
+            const passInput = document.getElementById('password');
+            const passError = document.getElementById('password-error');
+            const val = passInput.value;
+
+            // 1. Validar si la contraseña está en la lista negra de contraseñas comunes
+            if (weakPasswords.includes(val.toLowerCase())) {
+                passError.textContent = 'La contraseña es demasiado común e insegura. Elige otra.';
+                passError.classList.remove('hidden');
+                passInput.classList.add('border-red-500/60');
+                return false;
+            }
+
+            // 2. Validar que tenga al menos 6 caracteres
+            if (val.length > 0 && val.length < 6) {
+                passError.textContent = 'La contraseña debe tener al menos 6 caracteres.';
+                passError.classList.remove('hidden');
+                passInput.classList.add('border-red-500/60');
+                return false;
+            }
+
+            // 3. Validar que contenga al menos un número y una letra
+            const hasLetter = /[a-zA-Z]/.test(val);
+            const hasNumber = /[0-9]/.test(val);
+            
+            if (val.length >= 6 && (!hasLetter || !hasNumber)) {
+                passError.textContent = 'Por seguridad, incluye al menos una letra y un número.';
+                passError.classList.remove('hidden');
+                passInput.classList.add('border-red-500/60');
+                return false;
+            }
+
+            // Si pasa todas las pruebas
+            passError.classList.add('hidden');
+            passInput.classList.remove('border-red-500/60');
+            return true;
+        }
+
+        // Procesa el formulario
+        function handleSubmit(e) {
+            e.preventDefault();
+
+            const emailInput = document.getElementById('email');
+            const emailVal = emailInput.value.trim();
+            const passwordInput = document.getElementById('password');
+            const passwordVal = passwordInput.value;
+
+            // Validar correo
+            if (!isValidEmailFormat(emailVal)) {
+                validateEmailLive();
+                emailInput.focus();
+                return;
+            }
+
+            // Validar contraseña
+            if (isRegister && !validatePasswordLive()) {
+                passwordInput.focus();
+                return;
+            }
+
+            let user;
+
+            if (isRegister) {
+                const fullname = document.getElementById('fullname').value.trim();
+                const code = document.getElementById('country-code').value;
+                const phone = document.getElementById('phone').value.trim();
+
+                user = {
+                    id: Date.now(),
+                    name: fullname,
+                    email: emailVal,
+                    phone: `${code} ${phone}`,
+                    password: passwordVal
+                };
+
+                const users = JSON.parse(localStorage.getItem('coworking_users_db')) || [];
+                users.push(user);
+                localStorage.setItem('coworking_users_db', JSON.stringify(users));
+
+                //alert('¡Registro exitoso! Redirigiendo a reservas...');
+            } else {
+                const users = JSON.parse(localStorage.getItem('coworking_users_db')) || [];
+                user = users.find(u => u.email === emailVal && u.password === passwordVal);
+
+                if (!user) {
+                    alert('Correo o contraseña incorrectos.');
+                    return;
+                }
+                //alert('¡Sesión iniciada! Redirigiendo a reservas...');
+            }
+
+            // Guardar sesión y redirigir
+            localStorage.setItem('coworking_current_user', JSON.stringify(user));
+            window.location.href = "Reservas.html";
+        }
+    </script>
+</body>
+</html>
